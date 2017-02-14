@@ -79,6 +79,18 @@ func identifyThisHost(client *photon.Client) (string, string, string) {
 	}
 }
 
+func (d *VolumeDriver) verifyTarget() error {
+	// Try fetching the project for the given project ID,
+	// verifies the target (client) and the project.
+	_, err := d.client.Projects.Get(d.project)
+
+	if err == nil {
+		// Fetch the VM using given host ID.
+		_, err = d.client.VMs.Get(d.hostID)
+	}
+	return err
+}
+
 // NewVolumeDriver - creates Driver, creates client for given target
 func NewVolumeDriver(targetURL string, projectID string, hostID string, mountDir string) *VolumeDriver {
 
@@ -90,6 +102,12 @@ func NewVolumeDriver(targetURL string, projectID string, hostID string, mountDir
 
 	// Use default timeout of thirty seconds and retry of three
 	d.client = photon.NewClient(targetURL, nil, nil)
+
+	err := d.verifyTarget()
+	if err != nil {
+		log.WithFields(log.Fields{"target": targetURL, "project-id": projectID}).Warning("Invalid target and or project ID, exiting.")
+		return nil
+	}
 	d.mountRoot = mountDir
 
 	// Get VM ID for this host, get the IP for the VM
