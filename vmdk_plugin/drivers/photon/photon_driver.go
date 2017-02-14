@@ -64,6 +64,21 @@ type VolumeDriver struct {
 	target    string
 }
 
+func identifyThisHost(client *photon.Client) (string, string, string) {
+	// Get the list of tenants and projects and identify
+	// the VM ID for this host and its project and tenant
+	// IDs.
+	tenants, err := client.Tenants.GetAll()
+
+	for _, tenant := range tenants.Items {
+		// Get all projects for this tenant
+		projects, err := client.Tenants.GetProjects(tenant.ID, nil)
+		for project := range projects {
+			vms, err := client.Projects.GetVMs(project.ID)
+		}
+	}
+}
+
 // NewVolumeDriver - creates Driver, creates client for given target
 func NewVolumeDriver(targetURL string, projectID string, hostID string, mountDir string) *VolumeDriver {
 
@@ -72,9 +87,14 @@ func NewVolumeDriver(targetURL string, projectID string, hostID string, mountDir
 		project: projectID,
 		hostID:  hostID,
 	}
+
 	// Use default timeout of thirty seconds and retry of three
 	d.client = photon.NewClient(targetURL, nil, nil)
 	d.mountRoot = mountDir
+
+	// Get VM ID for this host, get the IP for the VM
+	// and a match with what Photon returns.
+
 	d.refCounts = refcount.NewRefCountsMap()
 	d.refCounts.Init(d, mountDir, driverName)
 
