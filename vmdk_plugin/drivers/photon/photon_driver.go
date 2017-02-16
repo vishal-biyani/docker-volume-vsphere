@@ -73,17 +73,20 @@ func (d *VolumeDriver) identifyHost(hostIP string) {
 	tenants, err := d.client.Tenants.GetAll()
 	if err != nil {
 		log.WithFields(log.Fields{"target": d.target}).Warning("Invalid target, unable to get list of tenants, exiting.")
+		return
 	}
 	for _, tenant := range tenants.Items {
 		// Get all projects for this tenant
 		projects, err := d.client.Tenants.GetProjects(tenant.ID, nil)
 		if err != nil {
 			log.WithFields(log.Fields{"target": d.target}).Warning("Invalid target, unable to get list of projects, exiting.")
+			return
 		}
 		for _, project := range projects.Items {
 			vms, err := d.client.Projects.GetVMs(project.ID, nil)
 			if err != nil {
 				log.WithFields(log.Fields{"target": d.target}).Warning("Invalid target, unable to fetch list of VMs, exiting.")
+				return
 			}
 			for _, vm := range vms.Items {
 				var taskErr error
@@ -97,10 +100,9 @@ func (d *VolumeDriver) identifyHost(hostIP string) {
 					return
 				}
 				props := netTask.ResourceProperties.(map[string]interface{})
-				networkConn := props["networkConnections"].([]interface{})
+				networkConn := props["networkConnections"].([]map[string]interface{})
 				for _, network := range networkConn {
-					net := network.(map[string]interface{})
-					if hostIP == net["ipAddress"] {
+					if hostIP == network["ipAddress"] {
 						d.tenant = tenant.ID
 						d.project = project.ID
 						d.host = vm.ID
@@ -126,6 +128,7 @@ func (d *VolumeDriver) getHostIP() (hostIP string) {
 		ipaddr := ifAddr.(*net.IPNet)
 		if !ipaddr.IP.IsLoopback() && ipaddr.IP.To4() != nil {
 			hostIP = ipaddr.IP.String()
+			log.WithFields(log.Fields{"host IP": hostIP}).Info("Found host IP - ")
 			return
 		}
 	}
