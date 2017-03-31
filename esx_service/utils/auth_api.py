@@ -491,6 +491,10 @@ def vm_in_any_tenant(vms):
 def _tenant_vm_add(name, vm_list):
     """ API to add vms for a tenant """
     logging.debug("_tenant_vm_add: name=%s vm_list=%s", name, vm_list)
+    if  name  == auth_data_const.DEFAULT_TENANT:
+        error_info = error_code.generate_error_info(ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT, "vm add", name)
+        return error_info
+
     error_info, tenant = get_tenant_from_db(name)
     if error_info:
         return error_info
@@ -536,6 +540,10 @@ def _tenant_vm_add(name, vm_list):
 def _tenant_vm_rm(name, vm_list):
     """ API to remove vms for a tenant """
     logging.debug("_tenant_vm_rm: name=%s vm_list=%s", name, vm_list)
+    if  name  == auth_data_const.DEFAULT_TENANT:
+        error_info = error_code.generate_error_info(ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT, "vm rm", name)
+        return error_info
+
     error_info, tenant = get_tenant_from_db(name)
     if error_info:
         return error_info
@@ -600,6 +608,10 @@ def _tenant_vm_ls(name):
 def _tenant_vm_replace(name, vm_list):
     """ API to replace vms for a tenant """
     logging.debug("_tenant_vm_replace: name=%s vm_list=%s", name, vm_list)
+    if  name  == auth_data_const.DEFAULT_TENANT:
+        error_info = error_code.generate_error_info(ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT, "vm replace", name)
+        return error_info
+
     error_info, tenant = get_tenant_from_db(name)
     if error_info:
         return error_info
