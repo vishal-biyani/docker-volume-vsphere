@@ -57,7 +57,7 @@ class ErrorCode:
     INTERNAL_ERROR = 501
     INVALID_ARGUMENT = 502
     VOLUME_NAME_INVALID = 503
-    OPERATION_NOT_ALLOWED_FOR_TENANT = 504
+    FEATURE_NOT_SUPPORT = 504
 
 
 error_code_to_message = {
@@ -94,7 +94,7 @@ error_code_to_message = {
     ErrorCode.INTERNAL_ERROR : "Internal Error({0})",
     ErrorCode.INVALID_ARGUMENT : "Invalid Argument({0})",
     ErrorCode.VOLUME_NAME_INVALID : "Volume name {0} is invalid, only {1} is allowed",
-    ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT : "Operation '{0}' is not allowed for vmgroup {1}."
+    ErrorCode.FEATURE_NOT_SUPPORT : "This feature is not supported for vmgroup {0}."
 }
 
 class ErrorInfo:

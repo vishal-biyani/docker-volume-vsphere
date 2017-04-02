@@ -488,12 +488,25 @@ def vm_in_any_tenant(vms):
 
     return None
 
+
+def named_tenant(func):
+
+    def not_supported():
+        error_info = error_code.generate_error_info(ErrorCode.FEATURE_NOT_SUPPORT,
+                                                    auth_data_const.DEFAULT_TENANT)
+        return error_info
+
+    def wrap_function(name, vm_list):
+        if name == auth_data_const.DEFAULT_TENANT:
+            return not_supported()
+        return func(name, vm_list)
+    return wrap_function
+
+
+@named_tenant
 def _tenant_vm_add(name, vm_list):
     """ API to add vms for a tenant """
     logging.debug("_tenant_vm_add: name=%s vm_list=%s", name, vm_list)
-    if  name  == auth_data_const.DEFAULT_TENANT:
-        error_info = error_code.generate_error_info(ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT, "vm add", name)
-        return error_info
 
     error_info, tenant = get_tenant_from_db(name)
     if error_info:
@@ -537,12 +550,11 @@ def _tenant_vm_add(name, vm_list):
         error_info = error_code.generate_error_info(ErrorCode.INTERNAL_ERROR, error_msg)
     return error_info
 
+
+@named_tenant
 def _tenant_vm_rm(name, vm_list):
     """ API to remove vms for a tenant """
     logging.debug("_tenant_vm_rm: name=%s vm_list=%s", name, vm_list)
-    if  name  == auth_data_const.DEFAULT_TENANT:
-        error_info = error_code.generate_error_info(ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT, "vm rm", name)
-        return error_info
 
     error_info, tenant = get_tenant_from_db(name)
     if error_info:
@@ -605,12 +617,11 @@ def _tenant_vm_ls(name):
     # tenant.vms is a list of vm_uuid of vms which belong to this tenant
     return None, tenant.vms
 
+
+@named_tenant
 def _tenant_vm_replace(name, vm_list):
     """ API to replace vms for a tenant """
     logging.debug("_tenant_vm_replace: name=%s vm_list=%s", name, vm_list)
-    if  name  == auth_data_const.DEFAULT_TENANT:
-        error_info = error_code.generate_error_info(ErrorCode.OPERATION_NOT_ALLOWED_FOR_TENANT, "vm replace", name)
-        return error_info
 
     error_info, tenant = get_tenant_from_db(name)
     if error_info:
@@ -704,7 +715,9 @@ def check_privilege_parameters(privilege):
 
     return None
 
-def _tenant_access_add(name, datastore, allow_create=None, default_datastore=False, volume_maxsize_in_MB=None, volume_totalsize_in_MB=None):
+
+def _tenant_access_add(name, datastore, allow_create=None, default_datastore=False,
+                       volume_maxsize_in_MB=None, volume_totalsize_in_MB=None):
     """ API to add datastore access for a tenant """
 
     logging.debug("_tenant_access_add: name=%s datastore=%s, allow_create=%s "
