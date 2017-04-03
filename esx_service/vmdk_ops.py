@@ -688,15 +688,16 @@ def get_vol_path(datastore, tenant_name=None):
     # is created on <datastore>/DOCK_VOLS_DIR/tenant_uuid
     # a symlink <datastore>/DOCK_VOLS_DIR/tenant_name will be created to point to
     # path <datastore>/DOCK_VOLS_DIR/tenant_uuid
+
     dock_vol_path = os.path.join("/vmfs/volumes", datastore, DOCK_VOLS_DIR)
+    path = dock_vol_path
+
     if tenant_name:
         error_info, tenant = auth_api.get_tenant_from_db(tenant_name)
         if error_info:
             logging.error("get_vol_path: cannont find tenant info for tenant %s", tenant_name)
             path = dock_vol_path
         path = os.path.join(dock_vol_path, tenant.id)
-    else:
-        path = dock_vol_path
 
     if os.path.isdir(path):
         # If the path exists then return it as is.
@@ -705,7 +706,7 @@ def get_vol_path(datastore, tenant_name=None):
 
     if not os.path.isdir(dock_vol_path):
         # The osfs tools are usable for DOCK_VOLS_DIR on all datastores
-        cmd = "{0} {1}".format(OSFS_MKDIR_CMD, dock_vol_path)
+        cmd = "{0} '{1}'".format(OSFS_MKDIR_CMD, dock_vol_path)
         rc, out = RunCommand(cmd)
         if rc != 0:
             errMsg = "{0} creation failed - {1} on datastore {2}".format(DOCK_VOLS_DIR, os.strerror(rc), datastore)
