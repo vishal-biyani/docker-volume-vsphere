@@ -498,11 +498,11 @@ def named_tenant(func):
         return error_code.generate_error_info(ErrorCode.FEATURE_NOT_SUPPORTED,
                                               auth_data_const.DEFAULT_TENANT)
 
-    def wrap_function(name, vm_list):
+    def check_name(name, vm_list):
         if name == auth_data_const.DEFAULT_TENANT:
             return not_supported()
         return func(name, vm_list)
-    return wrap_function
+    return check_name
 
 
 @named_tenant
