@@ -828,6 +828,11 @@ def executeRequest(vm_uuid, vm_name, config_path, cmd, full_vol_name, opts):
     else:
         default_datastore = get_datastore_name(default_datastore_url)
 
+    if cmd == "list":
+        threadutils.set_thread_name("{0}-nolock-{1}".format(vm_name, cmd))
+        # if default_datastore is not set, should return error
+        return listVMDK(tenant_name)
+
     try:
         vol_name, datastore = parse_vol_name(full_vol_name)
     except ValidationError as ex:
@@ -853,11 +858,6 @@ def executeRequest(vm_uuid, vm_name, config_path, cmd, full_vol_name, opts):
 
     logging.debug("executeRequest: vm_uuid=%s, vm_name=%s, tenant_name=%s, tenant_uuid=%s, default_datastore_url=%s",
                   vm_uuid, vm_name, tenant_uuid, tenant_name, default_datastore_url)
-
-    if cmd == "list":
-        threadutils.set_thread_name("{0}-nolock-{1}".format(vm_name, cmd))
-        # if default_datastore is not set, should return error
-        return listVMDK(tenant_name)
 
     error_info, tenant_uuid, tenant_name = auth.authorize(vm_uuid, datastore_url, cmd, opts)
     if error_info:
