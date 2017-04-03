@@ -490,11 +490,13 @@ def vm_in_any_tenant(vms):
 
 
 def named_tenant(func):
-
+    """
+        decorator to check whether the function is called by a named tenant
+        return error that feature is not supported if called by _DEFAULT tenant
+    """
     def not_supported():
-        error_info = error_code.generate_error_info(ErrorCode.FEATURE_NOT_SUPPORT,
-                                                    auth_data_const.DEFAULT_TENANT)
-        return error_info
+        return error_code.generate_error_info(ErrorCode.FEATURE_NOT_SUPPORTED,
+                                              auth_data_const.DEFAULT_TENANT)
 
     def wrap_function(name, vm_list):
         if name == auth_data_const.DEFAULT_TENANT:

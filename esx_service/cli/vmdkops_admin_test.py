@@ -921,24 +921,22 @@ class TestTenant(unittest.TestCase):
         self.assertEqual(rows, [])
 
     def test_tenant_vm_for_default_tenant(self):
+        """ Test AdminCLI vmgroup vm management for _DEFAULT vmgroup """
         logging.debug("Test vm add for _DEFAULT vmgroup")
         # Test "vm add" for _DEFAULT tenant, which should fail
-        error_info = auth_api._tenant_vm_add(
-                                              name=auth_data_const.DEFAULT_TENANT,
-                                              vm_list=[self.vm1_name])
-        self.assertEqual(error_code.ErrorCode.FEATURE_NOT_SUPPORT, error_info.code)
+        error_info = auth_api._tenant_vm_add(name=auth_data_const.DEFAULT_TENANT,
+                                             vm_list=[self.vm1_name])
+        self.assertEqual(error_code.ErrorCode.FEATURE_NOT_SUPPORTED, error_info.code)
 
         # Test "vm rm" for _DEFAULT tenant, which should fail
-        error_info = auth_api._tenant_vm_add(
-                                              name=auth_data_const.DEFAULT_TENANT,
-                                              vm_list=[self.vm1_name])
-        self.assertEqual(error_code.ErrorCode.FEATURE_NOT_SUPPORT, error_info.code)
+        error_info = auth_api._tenant_vm_add(name=auth_data_const.DEFAULT_TENANT,
+                                             vm_list=[self.vm1_name])
+        self.assertEqual(error_code.ErrorCode.FEATURE_NOT_SUPPORTED, error_info.code)
 
         # Test "vm add" for _DEFAULT tenant, which should fail
-        error_info = auth_api._tenant_vm_add(
-                                              name=auth_data_const.DEFAULT_TENANT,
-                                              vm_list=[self.vm1_name])
-        self.assertEqual(error_code.ErrorCode.FEATURE_NOT_SUPPORT, error_info.code)
+        error_info = auth_api._tenant_vm_add(name=auth_data_const.DEFAULT_TENANT,
+                                             vm_list=[self.vm1_name])
+        self.assertEqual(error_code.ErrorCode.FEATURE_NOT_SUPPORTED, error_info.code)
 
 if __name__ == '__main__':
     kv.init()
