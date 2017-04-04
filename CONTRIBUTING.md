@@ -65,12 +65,12 @@ Head to GitHub and author a new release add the changelog for the tag created.
 **Note**: Some manual steps are required before publishing new release as shown below.
 1. Download deliverables from Github release page 
 2. Remove VIB/DEB/RPMs from the ```Downloads``` sections
-3. Use internal Confluence page to sign the VIB (make sure to update [vDVS_bulletin.xml](https://github.com/vmware/docker-volume-vsphere/blob/master/docs/misc/vDVS_bulletin.xml#L19) to keep it current with the release
+3. Perform steps from internal Confluence page to sign the VIB. Update [vDVS_bulletin.xml](https://github.com/vmware/docker-volume-vsphere/blob/master/docs/misc/vDVS_bulletin.xml#L19) to keep it current with the release
 4. Head to [Bintray](https://bintray.com/vmware/product/vDVS/view) to publish signed VIB
 5. Push managed plugin to docker store
 6. Add ```Downloads``` section with direct links; take [Release 0.13](https://github.com/vmware/docker-volume-vsphere/releases/tag/0.13) as the reference
 
-### Push vDVS managed plugin
+### Publish vDVS managed plugin to Docker Store
 **Note**: not automated as of 04/04/17
 
 To push plugin image
